@@ -10,6 +10,10 @@
 #import "LocalyticsSession.h"
 
 
+void MTDAnalyticsSetIsPremiumAccount(BOOL premiumAccount);
+void MTDAnalyticsTagScreen(NSString *screenIndentifier);
+
+
 NS_INLINE void MTDAnalyticsStartSession(NSString *key) {
     [[LocalyticsSession shared] startSession:key];
 }
@@ -28,10 +32,6 @@ NS_INLINE void MTDAnalyticsResumeSession(BOOL upload) {
     if (upload) {
         [[LocalyticsSession shared] upload];
     }
-}
-
-NS_INLINE void MTDAnalyticsTagScreen(NSString *screenIndentifier) {
-    [[LocalyticsSession shared] tagScreen:screenIndentifier];
 }
 
 __attribute__((overloadable)) NS_INLINE void MTDAnalyticsTagEvent(NSString *event) {
