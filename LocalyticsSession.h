@@ -10,7 +10,7 @@
 #import <UIKit/UIKit.h>
 #import <CoreLocation/CoreLocation.h>
 
-#define CLIENT_VERSION              @"2.18.5"
+#define CLIENT_VERSION              @"2.23.0"
 #define MARKETING_PLATFORM
 
 /*!
@@ -46,9 +46,6 @@
 
 @interface LocalyticsSession : NSObject
 
-
-+ (void)logMessage:(NSString *)message;
-
 /*!
  @property enableHTTPS
  @abstract (Optional) Determines whether or not HTTPS is used when calling the Localytics
@@ -62,6 +59,13 @@
  to the console. The default is NO
  */
 @property (nonatomic, assign) BOOL loggingEnabled;
+
+/*!
+ @property advertisingIdentifierEnabled
+ @abstract (Optional) Determines whether or not IDFA is collected and sent to Localytics.
+ The default is YES.
+ */
+@property (nonatomic, assign) BOOL advertisingIdentifierEnabled;
 
 /*!
  @property sessionTimeoutInterval
@@ -229,6 +233,12 @@ customerValueIncrease:(NSNumber *)customerValueIncrease;
  */
 - (void)setLocation:(CLLocationCoordinate2D)deviceLocation;
 
+/*!
+ @method setPushToken
+ @abstract Stores the device's APNS token. This will be used in all event and session calls.
+ @param pushToken device token returned by application:didRegisterForRemoteNotificationsWithDeviceToken:
+ */
+- (void)setPushToken:(NSData *)pushToken;
 
 /*!
  @method setCustomDimension
@@ -283,6 +293,16 @@ customerValueIncrease:(NSNumber *)customerValueIncrease;
  */
 - (void)setCustomerEmail:(NSString *)email;
 
+#ifdef MARKETING_PLATFORM
+/*!
+ @method handleRemoteNotification
+ @abstract Used to record performance data for push notifications
+ @param notificationInfo The dictionary from either didFinishLaunchingWithOptions
+ or didReceiveRemoteNotification should be passed on to this method
+ */
+- (void)handleRemoteNotification:(NSDictionary *)notificationInfo;
+#endif
+
 @end
 
 @protocol LocalyticsSessionDelegate <NSObject>
@@ -297,6 +317,15 @@ customerValueIncrease:(NSNumber *)customerValueIncrease;
  session or started a new one.
  */
 - (void)localyticsResumedSession:(BOOL)didResumeExistingSession;
+
+/*!
+ @method localyticsPrepareUploadBody
+ @abstract Register for this callback if you wish to modify the upload body before
+ being sent to Localytics
+ @param uploadBody The upload body as prepared by Localytics
+ @return The modified upload body
+ */
+- (NSString *)localyticsPrepareUploadBody:(NSString *)uploadBody;
 
 @end
 
